@@ -1,23 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:my_goals/main.dart';
-import 'package:my_goals/models/task.dart';
-import 'package:my_goals/services/webservice.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:get/get.dart';
+import 'package:my_goals/tasks/controller/createtask_controller.dart';
 
-class CreateTask extends StatefulWidget {
+class CreateTask extends StatelessWidget {
   CreateTask({Key key}) : super(key: key);
-
-  @override
-  _CreateTaskState createState() => _CreateTaskState();
-}
-
-class _CreateTaskState extends State<CreateTask> {
-  _CreateTaskState();
-
-  bool _checkboxvalue = false;
+  CreateTaskController _createTaskController = Get.put(CreateTaskController());
   final _formKey = GlobalKey<FormState>();
-  String _title;
-  String _description;
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +42,8 @@ class _CreateTaskState extends State<CreateTask> {
                             }
                             return null;
                           },
-                          onSaved: (String value) {
-                            setState(() {
-                              _title = value;
-                            });
+                          onSaved: (String title) {
+                            _createTaskController.title.value = title;
                           },
                         ),
                         SizedBox(
@@ -82,29 +68,8 @@ class _CreateTaskState extends State<CreateTask> {
                             }
                             return null;
                           },
-                          onSaved: (String value) {
-                            setState(() {
-                              _description = value;
-                            });
-                          },
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        CheckboxListTile(
-                          title: new Text(
-                            'Completed',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
-                          ),
-                          activeColor: Colors.green,
-                          value: _checkboxvalue,
-                          onChanged: (bool newvalue) {
-                            setState(() {
-                              _checkboxvalue = newvalue;
-                            });
+                          onSaved: (String desc) {
+                            _createTaskController.description.value = desc;
                           },
                         ),
                         SizedBox(
@@ -145,32 +110,7 @@ class _CreateTaskState extends State<CreateTask> {
                             onTap: () {
                               if (_formKey.currentState.validate()) {
                                 _formKey.currentState.save();
-                                final Map<String, dynamic> newtask = {
-                                  "title": _title,
-                                  "description": _description,
-                                  "completed": _checkboxvalue,
-                                  "created_date": DateTime.now().toString()
-                                };
-                                WebService.createTask(newtask)
-                                    .then((createdtask) {
-                                  if (createdtask != null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                createdtask.title.toString())));
-                                    Navigator.pop(
-                                        context,
-                                        PageTransition(
-                                            type:
-                                                PageTransitionType.rightToLeft,
-                                            child: MyHomePage()));
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                'Task creation was failed.')));
-                                  }
-                                });
+                                _createTaskController.createTasks();
                               }
                             }),
                       ],
