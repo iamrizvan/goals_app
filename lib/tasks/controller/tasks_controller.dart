@@ -7,6 +7,7 @@ class TaskController extends GetxController {
   RxList<Task> rxTasks = RxList<Task>();
   RxBool isLoading = RxBool(true);
   RxInt currentIndex = RxInt(0);
+  Rx<Task> currentTask = Rx<Task>(null);
 
   @override
   void onInit() {
@@ -31,10 +32,18 @@ class TaskController extends GetxController {
   }
 
   void deleteTask(position) async {
-    rxTasks.remove(position);
+    var result = await APIService.deleteTask(rxTasks[position].id.toString());
+    if (result != null) {
+      fetchTasks();
+      Get.snackbar('Result', 'Task has been deleted.',
+          snackPosition: SnackPosition.BOTTOM);
+    } else {
+      Get.snackbar('Result', 'Task deletion failed.',
+          snackPosition: SnackPosition.BOTTOM);
+    }
   }
 
-  Future<Task> fetchCurrentTask() async {
-    return rxTasks[currentIndex.value];
+  void updateCurrentTask() async {
+    currentTask.value = rxTasks[currentIndex.value];
   }
 }

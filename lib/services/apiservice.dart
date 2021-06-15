@@ -73,14 +73,15 @@ class APIService {
             'Content-Type': 'application/json; charset=UTF-8',
           },
           body: jsonEncode(request));
-
       if (response.statusCode == 200) {
         Task task = Task.fromJson(json.decode(response.body));
         return task;
       } else {
+        print('Something went wrong. Error');
         return null;
       }
     } catch (e) {
+      print('Something went wrong. Exception' + e.toString());
       return null;
     }
   }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:my_goals/tasks/controller/edittask_controller.dart';
+import 'package:my_goals/tasks/controller/tasks_controller.dart';
 
 class EditTask extends StatelessWidget {
   UpdateTaskController _updateTaskController = Get.put(UpdateTaskController());
+  TaskController _taskController = Get.find<TaskController>();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -28,12 +30,12 @@ class EditTask extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.all(10),
                     child: Column(children: [
-                      _updateTaskController.currentTask() == null
+                      _taskController.currentTask() == null
                           ? SizedBox()
                           : Obx(
                               () => TextFormField(
                                 initialValue:
-                                    _updateTaskController.currentTask().title,
+                                    _taskController.currentTask.value.title,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
@@ -46,8 +48,7 @@ class EditTask extends StatelessWidget {
                                       color: Colors.white.withOpacity(0.6),
                                     )),
                                 onSaved: (String ttl) {
-                                  _updateTaskController.currentTask().title =
-                                      ttl;
+                                  _updateTaskController.title.value = ttl;
                                 },
                                 validator: (value) {
                                   if (value.isEmpty) {
@@ -60,13 +61,12 @@ class EditTask extends StatelessWidget {
                       SizedBox(
                         height: 20,
                       ),
-                      _updateTaskController.currentTask() == null
+                      _taskController.currentTask() == null
                           ? SizedBox()
                           : Obx(
                               () => TextFormField(
-                                initialValue: _updateTaskController
-                                    .currentTask()
-                                    .description,
+                                initialValue: _taskController
+                                    .currentTask.value.description,
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 18,
@@ -80,9 +80,8 @@ class EditTask extends StatelessWidget {
                                     )),
                                 maxLines: 8,
                                 onSaved: (String desc) {
-                                  _updateTaskController
-                                      .currentTask()
-                                      .description = desc;
+                                  _updateTaskController.description.value =
+                                      desc;
                                 },
                                 validator: (value) {
                                   if (value.isEmpty) {
@@ -106,9 +105,9 @@ class EditTask extends StatelessWidget {
                           ),
                           activeColor: Colors.green,
                           checkColor: Colors.white,
-                          value: _updateTaskController.currentTask().completed,
+                          value: _updateTaskController.checkboxvalue.value,
                           onChanged: (bool newvalue) {
-                            _updateTaskController.currentTask().completed =
+                            _updateTaskController.checkboxvalue.value =
                                 newvalue;
                           },
                         ),
@@ -116,46 +115,41 @@ class EditTask extends StatelessWidget {
                       SizedBox(
                         height: 10,
                       ),
-                      Obx(
-                        () => InkWell(
-                            child: Card(
-                              elevation: 5,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: const BorderRadius.all(
-                                  Radius.circular(20.0),
-                                ),
+                      InkWell(
+                          child: Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(20.0),
                               ),
-                              child: Container(
-                                  alignment: Alignment.center,
-                                  height: 40,
-                                  width: MediaQuery.of(context).size.width - 20,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.white, width: 1),
-                                      borderRadius: BorderRadius.circular(20),
-                                      gradient: LinearGradient(
-                                          begin: Alignment.centerLeft,
-                                          end: Alignment.centerRight,
-                                          colors: [
-                                            Colors.purple,
-                                            Colors.blue
-                                          ])),
-                                  child: Text(
-                                    'Update Task',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  )),
                             ),
-                            onTap: () {
-                              if (_formKey.currentState.validate()) {
-                                _formKey.currentState.save();
-                                _updateTaskController.updateTasks();
-                              }
-                            }),
-                      ),
+                            child: Container(
+                                alignment: Alignment.center,
+                                height: 40,
+                                width: MediaQuery.of(context).size.width - 20,
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.white, width: 1),
+                                    borderRadius: BorderRadius.circular(20),
+                                    gradient: LinearGradient(
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                        colors: [Colors.purple, Colors.blue])),
+                                child: Text(
+                                  'Update Task',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                )),
+                          ),
+                          onTap: () {
+                            if (_formKey.currentState.validate()) {
+                              _formKey.currentState.save();
+                              _updateTaskController.updateTasks();
+                            }
+                          }),
                     ]),
                   )),
             ],

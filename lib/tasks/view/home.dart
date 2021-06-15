@@ -118,6 +118,7 @@ class HomePage extends StatelessWidget {
                             ),
                             onTap: () {
                               _taskController.currentIndex.value = index;
+                              _taskController.updateCurrentTask();
                               Get.to(EditTask());
                             },
                           )),
@@ -139,17 +140,20 @@ class HomePage extends StatelessWidget {
                             color: Colors.red,
                           ),
                           onTap: () {
-                            final snackBar1 = SnackBar(
-                              content: Text('Do you want to delete this item?'),
-                              action: SnackBarAction(
-                                label: 'Delete',
-                                onPressed: () {
-                                  _taskController.deleteTask(index);
-                                },
-                              ),
-                            );
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(snackBar1);
+                            Get.snackbar(
+                                'Delete', 'Do you want to delete this task?',
+                                snackPosition: SnackPosition.BOTTOM,
+                                mainButton: TextButton(
+                                    onPressed: () {
+                                      _taskController.deleteTask(index);
+                                    },
+                                    child: Text(
+                                      'Delete',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold),
+                                    )));
                           },
                         ),
                       ),
